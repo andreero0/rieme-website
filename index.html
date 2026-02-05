@@ -12,66 +12,70 @@
             font-family: 'Space Grotesk', sans-serif;
         }
         
-        /* Floating food animation */
-        @keyframes float-1 {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-30px) rotate(5deg); }
-        }
-        @keyframes float-2 {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-25px) rotate(-5deg); }
-        }
-        @keyframes float-3 {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-35px) rotate(3deg); }
-        }
-        @keyframes float-slow {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-15px) scale(1.02); }
+        /* --- CORE 3D ANIMATIONS --- */
+        .preserve-3d { transform-style: preserve-3d; }
+        
+        @keyframes scene-rotate {
+            0% { transform: rotateX(70deg) rotateZ(0deg); }
+            100% { transform: rotateX(70deg) rotateZ(360deg); }
         }
         
-        /* Steam animation */
-        @keyframes steam {
-            0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
-            15% { opacity: 0.8; }
-            50% { transform: translateY(-80px) translateX(10px) scale(1.3); opacity: 0.4; }
-            100% { transform: translateY(-150px) translateX(-5px) scale(1.6); opacity: 0; }
+        @keyframes object-spin {
+            0% { transform: rotateX(0) rotateY(0) rotateZ(0); }
+            100% { transform: rotateX(360deg) rotateY(180deg) rotateZ(360deg); }
         }
         
-        .steam-particle {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+        @keyframes object-spin-reverse {
+            0% { transform: rotateX(360deg) rotateY(360deg) rotateZ(0); }
+            100% { transform: rotateX(0) rotateY(0) rotateZ(360deg); }
+        }
+        
+        @keyframes grid-move {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100px; }
+        }
+        
+        /* --- WARM GLOW EFFECTS --- */
+        .gyro-ring {
+            border: 1px solid rgba(212, 168, 75, 0.3);
             border-radius: 50%;
-            animation: steam 3s ease-out infinite;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-style: preserve-3d;
         }
         
-        /* Warm particle float */
-        @keyframes particle-float {
-            0%, 100% { 
-                transform: translateY(0) translateX(0); 
-                opacity: 0.3;
-            }
-            50% { 
-                transform: translateY(-100px) translateX(20px); 
-                opacity: 0.8;
-            }
+        .cube-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 1px solid #D4A84B;
+            background: rgba(139, 38, 53, 0.1);
+            box-shadow: 0 0 15px rgba(212, 168, 75, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            font-size: 10px;
+            color: #D4A84B;
+            overflow: hidden;
         }
         
-        /* Marquee */
+        /* Marquee & Text Styles */
         @keyframes marquee {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
         
-        /* Card hover */
+        .perspective-container { perspective: 1000px; }
+        
         .card-3d {
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
         }
+        
         .card-3d:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(139, 38, 53, 0.3);
+            transform: rotateX(5deg) rotateY(-5deg) translateZ(10px);
         }
         
         ::-webkit-scrollbar { width: 8px; }
@@ -83,16 +87,17 @@
             color: transparent;
         }
         
+        .grid-floor {
+            background-image: 
+                linear-gradient(rgba(212, 168, 75, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(212, 168, 75, 0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: grid-move 4s linear infinite;
+        }
+        
         /* Warm gradient background */
         .warm-gradient {
             background: linear-gradient(135deg, #1a0f0f 0%, #2d1a1a 50%, #1a0f0f 100%);
-        }
-        
-        /* Floating food items */
-        .floating-food {
-            position: absolute;
-            border-radius: 50%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
     </style>
     <script>
@@ -118,7 +123,7 @@
 <body class="bg-rieme-dark text-rieme-cream overflow-x-hidden selection:bg-rieme-gold selection:text-rieme-dark">
 
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center bg-rieme-dark/80 backdrop-blur-md border-b border-rieme-brown/30">
+    <nav class="fixed top-0 w-full z-50 mix-blend-difference px-6 py-6 flex justify-between items-center">
         <a href="#" class="text-2xl font-semibold tracking-tighter uppercase z-50 group">
             RIEME<span class="text-rieme-gold group-hover:text-white transition-colors">.</span>
         </a>
@@ -127,192 +132,190 @@
             <a href="#about" class="hover:text-rieme-gold transition-all">STORY</a>
             <a href="#order" class="hover:text-rieme-gold transition-all">ORDER</a>
         </div>
-        <a href="https://wa.me/14161234567" class="relative group overflow-hidden border border-rieme-gold/50 bg-rieme-dark/50 backdrop-blur-md px-5 py-2 rounded-full">
-            <span class="relative z-10 text-xs font-semibold tracking-wider uppercase group-hover:text-rieme-dark transition-colors">Order Now</span>
+        <a href="https://wa.me/14161234567" class="relative group overflow-hidden border border-rieme-brown bg-black/50 backdrop-blur-md px-6 py-2 rounded-full">
+            <span class="relative z-10 text-xs font-semibold tracking-wider uppercase group-hover:text-rieme-dark transition-colors">Order on WhatsApp</span>
             <div class="absolute inset-0 bg-rieme-gold transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
         </a>
     </nav>
 
-    <!-- Hero Section with Floating Food -->
-    <header class="relative min-h-screen flex flex-col justify-center items-center overflow-hidden warm-gradient">
+    <!-- Hero Section with 3D Animation -->
+    <header class="relative min-h-screen flex flex-col justify-center items-center overflow-hidden warm-gradient perspective-container" style="perspective: 1200px;">
         
-        <!-- Warm ambient particles -->
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute w-3 h-3 bg-rieme-gold/30 rounded-full" style="top: 20%; left: 15%; animation: particle-float 8s ease-in-out infinite;"></div>
-            <div class="absolute w-2 h-2 bg-rieme-terracotta/40 rounded-full" style="top: 60%; left: 80%; animation: particle-float 10s ease-in-out infinite 1s;"></div>
-            <div class="absolute w-4 h-4 bg-rieme-gold/20 rounded-full" style="top: 40%; left: 70%; animation: particle-float 12s ease-in-out infinite 2s;"></div>
-            <div class="absolute w-2 h-2 bg-rieme-cream/20 rounded-full" style="top: 75%; left: 25%; animation: particle-float 9s ease-in-out infinite 0.5s;"></div>
-            <div class="absolute w-3 h-3 bg-rieme-terracotta/30 rounded-full" style="top: 30%; left: 85%; animation: particle-float 11s ease-in-out infinite 1.5s;"></div>
-        </div>
-        
-        <!-- Floating Food Images -->
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <!-- Large meat pie - left -->
-            <div class="floating-food w-48 h-48 md:w-64 md:h-64 overflow-hidden" 
-                 style="top: 15%; left: 5%; animation: float-1 6s ease-in-out infinite;">
-                <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=400&auto=format&fit=crop&q=80" 
-                     alt="Meat Pie" class="w-full h-full object-cover rounded-full opacity-90">
-            </div>
+        <!-- 3D Environment Wrapper -->
+        <div class="absolute inset-0 preserve-3d flex items-center justify-center pointer-events-none">
             
-            <!-- Bread - right -->
-            <div class="floating-food w-40 h-40 md:w-56 md:h-56 overflow-hidden" 
-                 style="top: 10%; right: 8%; animation: float-2 7s ease-in-out infinite 0.5s;">
-                <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&auto=format&fit=crop&q=80" 
-                     alt="Fresh Bread" class="w-full h-full object-cover rounded-full opacity-85">
-            </div>
+            <!-- Infinite Floor Grid -->
+            <div class="absolute w-[200vw] h-[200vh] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 grid-floor opacity-20" style="transform: rotateX(80deg) translateZ(-100px);"></div>
             
-            <!-- Small pastry - bottom left -->
-            <div class="floating-food w-32 h-32 md:w-44 md:h-44 overflow-hidden" 
-                 style="bottom: 20%; left: 10%; animation: float-3 5s ease-in-out infinite 1s;">
-                <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400&auto=format&fit=crop&q=80" 
-                     alt="Pastry" class="w-full h-full object-cover rounded-full opacity-80">
+            <!-- The Core (Central Rotating Assembly) -->
+            <div class="relative w-0 h-0 preserve-3d">
+                
+                <!-- Outer Rings - Warm Gold -->
+                <div class="gyro-ring w-[600px] h-[600px] -mt-[300px] -ml-[300px]" style="animation: object-spin 25s linear infinite; border-color: rgba(212, 168, 75, 0.2);"></div>
+                <div class="gyro-ring w-[500px] h-[500px] -mt-[250px] -ml-[250px]" style="animation: object-spin-reverse 20s linear infinite; border-color: rgba(139, 38, 53, 0.3);"></div>
+                <div class="gyro-ring w-[400px] h-[400px] -mt-[200px] -ml-[200px]" style="animation: object-spin 15s linear infinite; border-color: rgba(199, 91, 57, 0.2);"></div>
+                
+                <!-- Central Cube Assembly -->
+                <div class="absolute top-0 left-0 preserve-3d" style="animation: object-spin 12s linear infinite;">
+                    <div class="relative w-32 h-32 -mt-16 -ml-16 preserve-3d">
+                        <div class="cube-face" style="transform: rotateY(0deg) translateZ(64px);">RIEME</div>
+                        <div class="cube-face" style="transform: rotateY(180deg) translateZ(64px);">BAKED</div>
+                        <div class="cube-face" style="transform: rotateY(90deg) translateZ(64px);">FRESH</div>
+                        <div class="cube-face" style="transform: rotateY(-90deg) translateZ(64px);">LOVE</div>
+                        <div class="cube-face" style="transform: rotateX(90deg) translateZ(64px);">HOME</div>
+                        <div class="cube-face" style="transform: rotateX(-90deg) translateZ(64px);">YUM</div>
+                    </div>
+                </div>
+                
+                <!-- Inner Warm Cube -->
+                <div class="absolute top-0 left-0 preserve-3d" style="animation: object-spin-reverse 6s linear infinite;">
+                    <div class="relative w-16 h-16 -mt-8 -ml-8 preserve-3d">
+                        <div class="absolute inset-0 bg-rieme-terracotta opacity-20 blur-sm"></div>
+                        <div class="cube-face border-rieme-cream/30 bg-transparent" style="transform: rotateY(0deg) translateZ(32px);"></div>
+                        <div class="cube-face border-rieme-cream/30 bg-transparent" style="transform: rotateY(180deg) translateZ(32px);"></div>
+                        <div class="cube-face border-rieme-cream/30 bg-transparent" style="transform: rotateY(90deg) translateZ(32px);"></div>
+                        <div class="cube-face border-rieme-cream/30 bg-transparent" style="transform: rotateY(-90deg) translateZ(32px);"></div>
+                        <div class="cube-face border-rieme-cream/30 bg-transparent" style="transform: rotateX(90deg) translateZ(32px);"></div>
+                        <div class="cube-face border-rieme-cream/30 bg-transparent" style="transform: rotateX(-90deg) translateZ(32px);"></div>
+                    </div>
+                </div>
+                
+                <!-- Orbiting Particles -->
+                <div class="absolute w-full h-full preserve-3d" style="animation: scene-rotate 35s linear infinite;">
+                    <div class="absolute w-2 h-2 bg-rieme-gold rounded-full blur-[2px]" style="transform: translateX(180px) translateY(-50px) translateZ(100px);"></div>
+                    <div class="absolute w-3 h-3 bg-rieme-cream rounded-full blur-[1px]" style="transform: translateX(-150px) translateY(120px) translateZ(-50px);"></div>
+                    <div class="absolute w-1 h-1 bg-rieme-terracotta rounded-full" style="transform: translateX(200px) translateY(200px) translateZ(200px);"></div>
+                </div>
             </div>
-            
-            <!-- Golden pastry - bottom right -->
-            <div class="floating-food w-36 h-36 md:w-48 md:h-48 overflow-hidden" 
-                 style="bottom: 15%; right: 12%; animation: float-1 8s ease-in-out infinite 1.5s;">
-                <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&auto=format&fit=crop&q=80" 
-                     alt="Golden Pastry" class="w-full h-full object-cover rounded-full opacity-85">
-            </div>
-        </div>
-        
-        <!-- Center steam effect (subtle) -->
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-            <div class="steam-particle" style="animation-delay: 0s;"></div>
-            <div class="steam-particle" style="left: 30px; animation-delay: 0.8s;"></div>
-            <div class="steam-particle" style="left: -20px; animation-delay: 1.6s;"></div>
-            <div class="steam-particle" style="left: 15px; animation-delay: 2.4s;"></div>
         </div>
         
         <!-- Hero Text -->
-        <div class="z-10 text-center relative px-4">
-            <h1 class="text-7xl md:text-9xl lg:text-[11rem] font-bold tracking-tighter leading-none select-none text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)]">
+        <div class="z-10 text-center mix-blend-exclusion pointer-events-none relative">
+            <h1 class="text-8xl md:text-9xl lg:text-[13rem] font-semibold tracking-tighter leading-none select-none text-white drop-shadow-[0_0_15px_rgba(0,0,0,1)]">
                 RIEME
             </h1>
-            <h2 class="text-xl md:text-2xl lg:text-3xl font-medium tracking-wide leading-none mt-4 text-rieme-gold/90 drop-shadow-lg">
+            <h2 class="text-2xl md:text-3xl lg:text-4xl font-medium tracking-wide leading-none mt-4 text-rieme-gold/80">
                 Taste of Home, Baked Fresh in Toronto
             </h2>
-            <p class="mt-6 text-rieme-cream/60 text-sm md:text-base max-w-md mx-auto">
-                Authentic Nigerian pastries made with love. Order by Thursday, pickup Saturday.
-            </p>
-            <a href="https://wa.me/14161234567" class="inline-flex items-center gap-2 mt-8 bg-rieme-gold text-rieme-dark px-8 py-3 rounded-full font-semibold hover:bg-rieme-cream transition-colors">
-                <iconify-icon icon="lucide:message-circle" width="20"></iconify-icon>
-                Order on WhatsApp
-            </a>
         </div>
         
-        <!-- Scroll indicator -->
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-rieme-gold/60">
-            <span class="text-xs tracking-widest uppercase">Scroll</span>
-            <iconify-icon icon="lucide:chevron-down" width="20" class="animate-bounce"></iconify-icon>
+        <!-- Bottom Info -->
+        <div class="absolute bottom-10 left-6 flex flex-col gap-1 pointer-events-none mix-blend-difference">
+            <div class="flex gap-4 items-center">
+                <div class="w-3 h-3 bg-rieme-gold rounded-full animate-pulse"></div>
+                <p class="text-xs text-rieme-gold font-mono uppercase tracking-widest">Now Taking Orders</p>
+            </div>
+            <div class="font-mono text-[10px] text-rieme-cream/50 space-y-1">
+                <p>> ORDER_BY: Thursday</p>
+                <p>> PICKUP: Saturday 10am-12pm</p>
+                <p>> LOCATION: Toronto, ON</p>
+            </div>
         </div>
     </header>
 
     <!-- Infinite Marquee -->
-    <div class="bg-rieme-gold py-4 overflow-hidden z-20 relative border-y-4 border-rieme-burgundy">
+    <div class="bg-rieme-gold py-4 overflow-hidden -rotate-1 scale-110 z-20 relative border-y-4 border-rieme-burgundy">
         <div class="whitespace-nowrap flex animate-[marquee_12s_linear_infinite]">
-            <span class="text-3xl md:text-5xl font-bold text-rieme-burgundy px-8 tracking-tighter">FRESH BAKED GOODNESS</span>
-            <span class="text-3xl md:text-5xl font-bold px-8 tracking-tighter text-stroke-title">NIGERIAN FLAVORS</span>
-            <span class="text-3xl md:text-5xl font-bold text-rieme-burgundy px-8 tracking-tighter">MADE WITH LOVE</span>
-            <span class="text-3xl md:text-5xl font-bold text-rieme-burgundy px-8 tracking-tighter">FRESH BAKED GOODNESS</span>
-            <span class="text-3xl md:text-5xl font-bold px-8 tracking-tighter text-stroke-title">NIGERIAN FLAVORS</span>
-            <span class="text-3xl md:text-5xl font-bold text-rieme-burgundy px-8 tracking-tighter">MADE WITH LOVE</span>
+            <span class="text-4xl md:text-6xl font-bold text-rieme-burgundy px-8 tracking-tighter">FRESH BAKED GOODNESS.</span>
+            <span class="text-4xl md:text-6xl font-bold px-8 tracking-tighter text-stroke-title">NIGERIAN FLAVORS.</span>
+            <span class="text-4xl md:text-6xl font-bold text-rieme-burgundy px-8 tracking-tighter">MADE WITH LOVE.</span>
+            <span class="text-4xl md:text-6xl font-bold text-rieme-burgundy px-8 tracking-tighter">FRESH BAKED GOODNESS.</span>
+            <span class="text-4xl md:text-6xl font-bold px-8 tracking-tighter text-stroke-title">NIGERIAN FLAVORS.</span>
+            <span class="text-4xl md:text-6xl font-bold text-rieme-burgundy px-8 tracking-tighter">MADE WITH LOVE.</span>
         </div>
     </div>
 
     <!-- Menu Section -->
-    <section id="menu" class="py-20 px-4 md:px-12 warm-gradient relative">
+    <section id="menu" class="py-24 px-4 md:px-12 warm-gradient relative">
         <div class="absolute top-0 right-0 w-96 h-96 bg-rieme-burgundy/20 blur-[120px] rounded-full pointer-events-none"></div>
         
-        <div class="max-w-7xl mx-auto">
-            <div class="flex justify-between items-end mb-12">
-                <h3 class="text-4xl md:text-6xl font-semibold tracking-tight text-white">
-                    OUR <span class="text-rieme-gold">MENU</span>
-                </h3>
-                <iconify-icon icon="lucide:utensils" width="40" class="text-rieme-gold hidden md:block"></iconify-icon>
-            </div>
+        <div class="flex justify-between items-end mb-16">
+            <h3 class="text-4xl md:text-6xl font-semibold tracking-tight text-white max-w-lg">
+                OUR <span class="text-rieme-gold">MENU</span>
+            </h3>
+            <iconify-icon icon="lucide:arrow-down-right" width="48" height="48" class="text-rieme-gold"></iconify-icon>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[300px]">
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                
-                <!-- Nigerian Meat Pies -->
-                <div class="lg:col-span-2 group card-3d">
-                    <div class="h-80 md:h-96 bg-rieme-brown/30 border border-rieme-brown/50 rounded-3xl relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=800&auto=format&fit=crop&q=80" 
-                             alt="Nigerian Meat Pies" 
-                             class="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500">
-                        <div class="absolute inset-0 bg-gradient-to-t from-rieme-dark via-rieme-dark/40 to-transparent"></div>
-                        <div class="absolute top-4 left-4 bg-rieme-burgundy/90 backdrop-blur px-4 py-1 rounded-full">
+            <!-- Item 1: Meat Pies (Large) -->
+            <div class="col-span-1 md:col-span-2 row-span-2 group perspective-container">
+                <div class="w-full h-full bg-rieme-brown/50 border border-rieme-brown rounded-3xl p-8 relative overflow-hidden card-3d">
+                    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center opacity-50 group-hover:opacity-70 transition-opacity"></div>
+                    <div class="relative z-10 flex flex-col justify-between h-full">
+                        <div class="bg-rieme-burgundy/90 backdrop-blur w-fit px-4 py-1 rounded-full border border-rieme-gold/30">
                             <span class="text-xs font-mono text-rieme-gold">SIGNATURE</span>
                         </div>
-                        <div class="absolute bottom-0 left-0 right-0 p-6">
-                            <h4 class="text-3xl md:text-4xl font-semibold tracking-tight mb-2 text-white">Nigerian Meat Pies</h4>
-                            <p class="text-rieme-cream/70 text-sm mb-3 max-w-md">Golden flaky crust, perfectly seasoned beef filling with potatoes. Just like home.</p>
-                            <div class="text-2xl font-mono text-rieme-gold">$5.00 <span class="text-sm text-rieme-cream/50">each</span></div>
+                        <div>
+                            <h4 class="text-4xl font-semibold tracking-tight mb-2 group-hover:translate-x-4 transition-transform text-white">NIGERIAN MEAT PIES</h4>
+                            <p class="text-rieme-cream/80 text-sm max-w-xs">Golden flaky crust, perfectly seasoned beef filling with potatoes. Just like home.</p>
+                            <div class="mt-4 text-2xl font-mono text-rieme-gold">$5.00 each</div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Fresh Bread -->
-                <div class="group card-3d">
-                    <div class="h-80 md:h-96 bg-rieme-brown/30 border border-rieme-brown/50 rounded-3xl relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&auto=format&fit=crop&q=80" 
-                             alt="Fresh Bread" 
-                             class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500">
-                        <div class="absolute inset-0 bg-gradient-to-t from-rieme-dark via-rieme-dark/50 to-transparent"></div>
-                        <div class="absolute bottom-0 left-0 right-0 p-6">
-                            <h4 class="text-2xl font-semibold tracking-tight mb-2 text-white">Fresh Bread</h4>
-                            <p class="text-rieme-cream/60 text-sm mb-3">Soft, golden, baked fresh weekly. Perfect for any meal.</p>
-                            <div class="text-xl font-mono text-rieme-gold">$8.00 <span class="text-sm text-rieme-cream/50">/ loaf</span></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Chin Chin -->
-                <div class="group card-3d">
-                    <div class="h-72 bg-rieme-brown/30 border border-rieme-brown/50 rounded-3xl relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&auto=format&fit=crop&q=80" 
-                             alt="Chin Chin" 
-                             class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500">
-                        <div class="absolute inset-0 bg-gradient-to-t from-rieme-dark via-rieme-dark/50 to-transparent"></div>
-                        <div class="absolute top-4 right-4 text-rieme-gold">
-                            <iconify-icon icon="lucide:sparkles" width="24"></iconify-icon>
-                        </div>
-                        <div class="absolute bottom-0 left-0 right-0 p-6">
-                            <h4 class="text-2xl font-semibold tracking-tight mb-1 text-white">Chin Chin</h4>
-                            <p class="text-rieme-cream/60 text-xs mb-2">Crunchy, sweet, addictive Nigerian snack</p>
-                            <div class="text-lg font-mono text-rieme-gold">$10.00 <span class="text-sm text-rieme-cream/50">/ bag</span></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Sandwiches -->
-                <div class="lg:col-span-2 group card-3d">
-                    <div class="h-72 bg-rieme-cream rounded-3xl relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=800&auto=format&fit=crop&q=80" 
-                             alt="Fresh Sandwiches" 
-                             class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-50 transition-all duration-500">
-                        <div class="absolute inset-0 bg-gradient-to-r from-rieme-cream via-rieme-cream/90 to-transparent"></div>
-                        <div class="relative z-10 p-8 flex flex-col justify-center h-full">
-                            <h4 class="text-3xl font-semibold tracking-tight text-rieme-burgundy mb-2">Fresh Sandwiches</h4>
-                            <p class="text-rieme-brown text-sm mb-3 max-w-sm">Made on our homemade bread. Various fillings available.</p>
-                            <div class="text-2xl font-mono text-rieme-burgundy">$12.00</div>
-                        </div>
-                    </div>
-                </div>
-                
             </div>
+            
+            <!-- Item 2: Fresh Bread (Tall) -->
+            <div class="col-span-1 md:col-span-1 row-span-2 group perspective-container mt-12 md:mt-0">
+                <div class="w-full h-full bg-rieme-brown/50 border border-rieme-brown rounded-3xl p-6 relative overflow-hidden card-3d flex flex-col justify-end">
+                    <div class="absolute inset-0 bg-gradient-to-t from-rieme-dark via-transparent to-transparent z-10"></div>
+                    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=600&auto=format&fit=crop')] bg-cover bg-center opacity-60 group-hover:scale-110 transition-transform duration-700"></div>
+                    <div class="relative z-20">
+                        <h4 class="text-2xl font-semibold tracking-tight mb-1 text-white">FRESH BREAD</h4>
+                        <p class="text-rieme-cream/60 text-xs mb-3">Soft, golden, baked fresh weekly. Perfect for any meal.</p>
+                        <div class="text-lg font-mono text-rieme-gold">$8.00 / loaf</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Item 3: Pickup Info Card -->
+            <div class="col-span-1 bg-rieme-gold rounded-3xl p-6 flex flex-col justify-center items-center text-center -rotate-2 hover:rotate-0 transition-transform duration-300">
+                <iconify-icon icon="lucide:calendar-check" width="32" class="text-rieme-burgundy mb-4"></iconify-icon>
+                <h4 class="text-rieme-burgundy font-bold text-xl tracking-tight leading-5">ORDER BY<br>THURSDAY</h4>
+                <p class="text-rieme-burgundy/70 text-sm mt-2">Pickup Saturday</p>
+            </div>
+            
+            <!-- Item 4: Chin Chin -->
+            <div class="col-span-1 group perspective-container">
+                <div class="w-full h-full bg-rieme-brown/50 border border-rieme-brown rounded-3xl p-6 relative overflow-hidden card-3d">
+                    <div class="absolute top-4 right-4 text-rieme-gold">
+                        <iconify-icon icon="lucide:sparkles" width="24"></iconify-icon>
+                    </div>
+                    <div class="mt-auto h-full flex flex-col justify-end">
+                        <h4 class="text-xl font-semibold tracking-tight text-white">CHIN CHIN</h4>
+                        <p class="text-rieme-cream/60 text-xs mb-1">Crunchy, sweet, addictive Nigerian snack</p>
+                        <p class="text-rieme-gold font-mono">$10.00 / bag</p>
+                    </div>
+                    <div class="absolute -bottom-10 -right-10 w-32 h-32 bg-rieme-terracotta rounded-full blur-2xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
+                </div>
+            </div>
+            
+            <!-- Item 5: Sandwiches (Wide) -->
+            <div class="col-span-1 md:col-span-2 lg:col-span-2 group perspective-container">
+                <div class="w-full h-full bg-rieme-cream rounded-3xl p-8 relative overflow-hidden card-3d text-rieme-dark">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="text-3xl font-semibold tracking-tight text-rieme-burgundy">FRESH SANDWICHES</h4>
+                            <p class="text-rieme-brown text-sm mt-2">Made on our homemade bread. Various fillings available.</p>
+                        </div>
+                        <div class="bg-rieme-burgundy text-rieme-cream px-3 py-1 rounded-full text-xs font-mono">$12.00</div>
+                    </div>
+                    <div class="absolute -right-10 -bottom-20 w-64 h-64 bg-rieme-gold rounded-full blur-3xl opacity-20"></div>
+                </div>
+            </div>
+            
         </div>
     </section>
 
     <!-- How It Works -->
-    <section id="order" class="py-20 px-6 bg-rieme-burgundy">
+    <section id="order" class="py-24 px-6 bg-rieme-burgundy">
         <div class="max-w-5xl mx-auto">
-            <h3 class="text-4xl md:text-5xl font-semibold tracking-tight text-center mb-16 text-white">
+            <h3 class="text-4xl md:text-6xl font-semibold tracking-tight text-center mb-16 text-white">
                 HOW TO <span class="text-rieme-gold">ORDER</span>
             </h3>
             
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="text-center p-8 border border-rieme-gold/30 rounded-2xl bg-rieme-dark/30 hover:bg-rieme-dark/50 transition-colors">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center p-8 border border-rieme-gold/30 rounded-2xl bg-rieme-dark/20">
                     <div class="w-16 h-16 bg-rieme-gold rounded-full flex items-center justify-center mx-auto mb-6">
                         <iconify-icon icon="lucide:scroll-text" width="28" class="text-rieme-burgundy"></iconify-icon>
                     </div>
@@ -320,7 +323,7 @@
                     <p class="text-rieme-cream/70 text-sm">Check out our delicious offerings above</p>
                 </div>
                 
-                <div class="text-center p-8 border border-rieme-gold/30 rounded-2xl bg-rieme-dark/30 hover:bg-rieme-dark/50 transition-colors">
+                <div class="text-center p-8 border border-rieme-gold/30 rounded-2xl bg-rieme-dark/20">
                     <div class="w-16 h-16 bg-rieme-gold rounded-full flex items-center justify-center mx-auto mb-6">
                         <iconify-icon icon="lucide:message-circle" width="28" class="text-rieme-burgundy"></iconify-icon>
                     </div>
@@ -328,52 +331,55 @@
                     <p class="text-rieme-cream/70 text-sm">Send your order by Thursday evening</p>
                 </div>
                 
-                <div class="text-center p-8 border border-rieme-gold/30 rounded-2xl bg-rieme-dark/30 hover:bg-rieme-dark/50 transition-colors">
+                <div class="text-center p-8 border border-rieme-gold/30 rounded-2xl bg-rieme-dark/20">
                     <div class="w-16 h-16 bg-rieme-gold rounded-full flex items-center justify-center mx-auto mb-6">
                         <iconify-icon icon="lucide:package-check" width="28" class="text-rieme-burgundy"></iconify-icon>
                     </div>
                     <h4 class="text-xl font-semibold mb-2 text-white">3. Pickup Saturday</h4>
-                    <p class="text-rieme-cream/70 text-sm">Collect fresh baked goods 10am-12pm</p>
+                    <p class="text-rieme-cream/70 text-sm">Collect your fresh baked goods 10am-12pm</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- About / Story Section -->
-    <section id="about" class="py-24 warm-gradient overflow-hidden relative">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                <div>
-                    <h2 class="text-4xl md:text-6xl font-semibold tracking-tighter leading-none mb-6">
-                        OUR <span class="text-rieme-gold">STORY</span>
+    <section id="about" class="py-32 warm-gradient overflow-hidden relative">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-rieme-brown rounded-full opacity-10"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-rieme-gold/20 rounded-full opacity-20"></div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col md:flex-row gap-12 items-center">
+                <div class="w-full md:w-1/2">
+                    <h2 class="text-5xl md:text-7xl font-semibold tracking-tighter leading-none mb-8">
+                        OUR <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-rieme-gold to-rieme-terracotta">STORY</span>
                     </h2>
-                    <p class="text-rieme-cream/70 text-lg leading-relaxed mb-4">
+                    <p class="text-rieme-cream/70 text-lg leading-relaxed max-w-md">
                         RIEME brings the authentic taste of Nigerian home cooking to Toronto. Every pastry is handmade with love using traditional recipes passed down through generations.
                     </p>
-                    <p class="text-rieme-cream/70 text-lg leading-relaxed">
+                    <p class="text-rieme-cream/70 text-lg leading-relaxed max-w-md mt-4">
                         We bake fresh weekly so you get that just-out-of-the-oven taste that reminds you of home.
                     </p>
-                    <div class="mt-8 flex gap-8">
-                        <div>
+                    <div class="mt-10 flex gap-8">
+                        <div class="flex flex-col gap-2">
                             <span class="text-3xl font-bold text-rieme-gold">Fresh</span>
-                            <p class="text-xs text-rieme-cream/50 uppercase tracking-wide mt-1">Baked Weekly</p>
+                            <span class="text-xs text-rieme-cream/50 uppercase tracking-wide">Baked Weekly</span>
                         </div>
-                        <div class="w-px bg-rieme-brown"></div>
-                        <div>
+                        <div class="w-px h-12 bg-rieme-brown"></div>
+                        <div class="flex flex-col gap-2">
                             <span class="text-3xl font-bold text-rieme-gold">Home</span>
-                            <p class="text-xs text-rieme-cream/50 uppercase tracking-wide mt-1">Made with Love</p>
+                            <span class="text-xs text-rieme-cream/50 uppercase tracking-wide">Made with Love</span>
                         </div>
                     </div>
                 </div>
                 
-                <div class="relative">
-                    <div class="aspect-square rounded-3xl overflow-hidden border-4 border-rieme-gold/30 shadow-2xl shadow-rieme-burgundy/30">
-                        <img src="https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=800&auto=format&fit=crop&q=80" 
-                             alt="Fresh baked goods" 
-                             class="w-full h-full object-cover">
-                    </div>
-                    <div class="absolute -bottom-4 -right-4 bg-rieme-gold text-rieme-burgundy px-6 py-3 rounded-full font-semibold shadow-lg">
-                        Toronto, ON
+                <div class="w-full md:w-1/2 perspective-container">
+                    <div class="relative w-full aspect-square bg-rieme-brown/30 border border-rieme-brown rounded-2xl p-2 transform hover:scale-105 transition-transform duration-500 shadow-2xl shadow-rieme-burgundy/20 overflow-hidden">
+                        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558961363-fa8fdf82db35?q=80&w=800&auto=format&fit=crop')] bg-cover bg-center opacity-80 rounded-xl"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-rieme-dark/80 to-transparent rounded-xl"></div>
+                        <div class="absolute bottom-6 left-6 right-6">
+                            <p class="text-rieme-gold font-mono text-sm">// TRADITION MEETS TORONTO</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -381,13 +387,13 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="py-20 px-6 bg-rieme-gold text-rieme-dark">
-        <div class="max-w-3xl mx-auto text-center">
-            <h2 class="text-5xl md:text-7xl font-bold tracking-tighter mb-4 text-rieme-burgundy">READY TO ORDER?</h2>
-            <p class="text-lg md:text-xl mb-10 text-rieme-burgundy/80">
-                Message us on WhatsApp to place your order.<br>Order by Thursday for Saturday pickup!
+    <section class="py-24 px-6 bg-rieme-gold text-rieme-dark">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-6xl md:text-8xl font-bold tracking-tighter mb-4 text-stroke-title">READY TO ORDER?</h2>
+            <p class="text-xl md:text-2xl font-medium mb-12 max-w-2xl mx-auto text-rieme-burgundy">
+                Message us on WhatsApp to place your order. Remember: order by Thursday for Saturday pickup!
             </p>
-            <a href="https://wa.me/14161234567" class="inline-flex items-center gap-3 bg-rieme-burgundy text-rieme-cream px-10 py-4 rounded-full font-bold hover:bg-rieme-dark transition-colors text-lg shadow-lg">
+            <a href="https://wa.me/14161234567" class="inline-flex items-center gap-3 bg-rieme-burgundy text-rieme-cream px-8 py-4 rounded-full font-bold border-2 border-rieme-burgundy hover:bg-transparent hover:text-rieme-burgundy transition-colors text-lg">
                 <iconify-icon icon="lucide:message-circle" width="24"></iconify-icon>
                 Order on WhatsApp
             </a>
@@ -395,19 +401,19 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-rieme-dark pt-16 pb-8 border-t border-rieme-brown/50">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-                <div>
-                    <a href="#" class="text-4xl font-semibold tracking-tighter uppercase block mb-4 text-white">RIEME<span class="text-rieme-gold">.</span></a>
-                    <p class="text-rieme-cream/50 text-sm">
+    <footer class="bg-rieme-dark pt-20 pb-10 border-t border-rieme-brown">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20">
+                <div class="col-span-1 md:col-span-1">
+                    <a href="#" class="text-5xl font-semibold tracking-tighter uppercase block mb-6 text-white">RIEME<span class="text-rieme-gold">.</span></a>
+                    <p class="text-rieme-cream/50 text-sm max-w-sm">
                         Authentic Nigerian pastries, baked fresh in Toronto. Taste of home, delivered with love.
                     </p>
                 </div>
                 
                 <div>
-                    <h5 class="text-rieme-gold font-semibold text-sm uppercase tracking-widest mb-4">Pickup Info</h5>
-                    <ul class="space-y-3 text-sm text-rieme-cream/60">
+                    <h5 class="text-white font-mono text-xs uppercase tracking-widest mb-6 text-rieme-gold">Pickup Location</h5>
+                    <ul class="space-y-4 text-sm text-rieme-cream/60">
                         <li class="flex items-center gap-2">
                             <iconify-icon icon="lucide:map-pin" width="16" class="text-rieme-gold"></iconify-icon>
                             Toronto, Ontario
@@ -424,8 +430,8 @@
                 </div>
                 
                 <div>
-                    <h5 class="text-rieme-gold font-semibold text-sm uppercase tracking-widest mb-4">Connect</h5>
-                    <div class="flex gap-3">
+                    <h5 class="text-white font-mono text-xs uppercase tracking-widest mb-6 text-rieme-gold">Connect</h5>
+                    <div class="flex gap-4">
                         <a href="https://wa.me/14161234567" class="w-10 h-10 border border-rieme-brown rounded-full flex items-center justify-center hover:bg-rieme-gold hover:text-rieme-dark hover:border-rieme-gold transition-all">
                             <iconify-icon icon="lucide:message-circle" width="18"></iconify-icon>
                         </a>
@@ -436,12 +442,19 @@
                 </div>
             </div>
             
-            <div class="flex flex-col md:flex-row justify-between items-center border-t border-rieme-brown/30 pt-8 text-xs text-rieme-cream/40">
+            <div class="flex flex-col md:flex-row justify-between items-center border-t border-rieme-brown pt-8 text-xs text-rieme-cream/40 font-mono">
                 <p>&copy; 2026 RIEME. A KENTROLOGIA brand.</p>
                 <div class="flex gap-6 mt-4 md:mt-0">
-                    <a href="#" class="hover:text-rieme-gold">Privacy</a>
-                    <a href="#" class="hover:text-rieme-gold">Terms</a>
+                    <a href="#" class="hover:text-rieme-gold">PRIVACY</a>
+                    <a href="#" class="hover:text-rieme-gold">TERMS</a>
                 </div>
+            </div>
+            
+            <!-- Big Footer Text -->
+            <div class="mt-20 overflow-hidden select-none opacity-5">
+                <h1 class="text-[10rem] md:text-[16rem] font-bold tracking-tighter leading-none text-center whitespace-nowrap text-rieme-cream">
+                    RIEME
+                </h1>
             </div>
         </div>
     </footer>
