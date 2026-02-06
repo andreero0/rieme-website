@@ -155,35 +155,28 @@
                 <div class="gyro-ring w-[500px] h-[500px] -mt-[250px] -ml-[250px]" style="animation: object-spin-reverse 20s linear infinite; border-color: rgba(139, 38, 53, 0.3);"></div>
                 <div class="gyro-ring w-[400px] h-[400px] -mt-[200px] -ml-[200px]" style="animation: object-spin 15s linear infinite; border-color: rgba(199, 91, 57, 0.2);"></div>
                 
-                <!-- Rotating Food Items -->
-                <div class="absolute top-0 left-0 preserve-3d" style="animation: object-spin 15s linear infinite;">
-                    <!-- Meat Pie -->
-                    <div class="absolute w-24 h-24 -mt-12 -ml-12 rounded-2xl overflow-hidden shadow-2xl shadow-rieme-gold/20" style="transform: rotateY(0deg) translateZ(120px);">
-                        <img src="https://images.unsplash.com/photo-1626202378486-d056f8d1a3e3?q=80&w=200&auto=format&fit=crop" alt="Meat Pie" class="w-full h-full object-cover">
-                    </div>
-                    <!-- Sausage Roll -->
-                    <div class="absolute w-20 h-20 -mt-10 -ml-10 rounded-2xl overflow-hidden shadow-2xl shadow-rieme-gold/20" style="transform: rotateY(120deg) translateZ(100px);">
-                        <img src="https://images.unsplash.com/photo-1626700051175-6818013e1d4f?q=80&w=200&auto=format&fit=crop" alt="Sausage Roll" class="w-full h-full object-cover">
-                    </div>
-                    <!-- Puff Puff -->
-                    <div class="absolute w-16 h-16 -mt-8 -ml-8 rounded-full overflow-hidden shadow-2xl shadow-rieme-gold/20" style="transform: rotateY(240deg) translateZ(80px);">
-                        <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?q=80&w=200&auto=format&fit=crop" alt="Puff Puff" class="w-full h-full object-cover">
+                <!-- Central Cube Assembly -->
+                <div class="absolute top-0 left-0 preserve-3d" style="animation: object-spin 12s linear infinite;">
+                    <div class="relative w-32 h-32 -mt-16 -ml-16 preserve-3d">
+                        <div class="cube-face" style="transform: rotateY(0deg) translateZ(64px);">RIEME</div>
+                        <div class="cube-face" style="transform: rotateY(180deg) translateZ(64px);">BAKED</div>
+                        <div class="cube-face" style="transform: rotateY(90deg) translateZ(64px);">FRESH</div>
+                        <div class="cube-face" style="transform: rotateY(-90deg) translateZ(64px);">LOVE</div>
+                        <div class="cube-face" style="transform: rotateX(90deg) translateZ(64px);">HOME</div>
+                        <div class="cube-face" style="transform: rotateX(-90deg) translateZ(64px);">YUM</div>
                     </div>
                 </div>
                 
-                <!-- Inner Rotating Food Items -->
-                <div class="absolute top-0 left-0 preserve-3d" style="animation: object-spin-reverse 10s linear infinite;">
-                    <!-- Chin Chin -->
-                    <div class="absolute w-12 h-12 -mt-6 -ml-6 rounded-xl overflow-hidden shadow-xl shadow-rieme-terracotta/20" style="transform: rotateY(60deg) translateZ(60px);">
-                        <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?q=80&w=150&auto=format&fit=crop" alt="Chin Chin" class="w-full h-full object-cover">
-                    </div>
-                    <!-- Fresh Bread -->
-                    <div class="absolute w-14 h-14 -mt-7 -ml-7 rounded-xl overflow-hidden shadow-xl shadow-rieme-gold/20" style="transform: rotateY(180deg) translateZ(70px);">
-                        <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=150&auto=format&fit=crop" alt="Fresh Bread" class="w-full h-full object-cover">
-                    </div>
-                    <!-- Sandwich -->
-                    <div class="absolute w-10 h-10 -mt-5 -ml-5 rounded-lg overflow-hidden shadow-xl shadow-rieme-cream/20" style="transform: rotateY(300deg) translateZ(50px);">
-                        <img src="https://images.unsplash.com/photo-1554433607-66b5efe9d304?q=80&w=150&auto=format&fit=crop" alt="Sandwich" class="w-full h-full object-cover">
+                <!-- Inner Warm Cube -->
+                <div class="absolute top-0 left-0 preserve-3d" style="animation: object-spin-reverse 6s linear infinite;">
+                    <div class="relative w-16 h-16 -mt-8 -ml-8 preserve-3d">
+                        <div class="absolute inset-0 bg-rieme-terracotta opacity-20 blur-sm"></div>
+                        <div class="cube-face border-rieme-cream/30 bg-transparent" style="transform: rotateY(0deg) translateZ(32px);"></div>
+                        <div class="cube-face border-rieme-cream/30 bg-transparent" style="transform: rotateY(180deg) translateZ(32px);"></div>
+                        <div class="cube-face border-rieme-cream/30 bg-transparent" style="transform: rotateY(90deg) translateZ(32px);"></div>
+                        <div class="cube-face border-rieme-cream/30 bg-transparent" style="transform: rotateY(-90deg) translateZ(32px);"></div>
+                        <div class="cube-face border-rieme-cream/30 bg-transparent" style="transform: rotateX(90deg) translateZ(32px);"></div>
+                        <div class="cube-face border-rieme-cream/30 bg-transparent" style="transform: rotateX(-90deg) translateZ(32px);"></div>
                     </div>
                 </div>
                 
